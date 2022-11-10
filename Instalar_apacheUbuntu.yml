@@ -1,0 +1,60 @@
+---
+- hosts: ubuntu
+  become: true
+  vars:
+   app_user: "jose"
+   http_host: "apacheansible.com"
+   http_conf: "apacheansible.com.conf"
+   http_port: "80"
+   disable_default: true
+
+  tasks:
+
+   - name: instalar apache2
+     ansible.builtin.apt:
+      name: apache2
+      update_cache: true
+      state: latest
+
+     notify:
+      - restart apache2
+
+   - name: document root exist
+     ansible.builtin.file:
+      path: "/var/www/{{ http_host }}"
+      state: directory
+      owner: "{{ app_user }}"
+      mode: '0755'
+
+   - name: custom index.html
+     ansible.builtin.copy:
+      dest: "/var/www/{{ http_host }}/index.html"
+      content: <h1>Pagina por defecto de apache cambiada<h1>
+
+   - name: set up Apache virtualhost
+     ansible.builtin.template:
+      src: "templates/apache.conf.j2"
+      dest: "/etc/apache2/sites-available/{{ http_conf }}"
+
+   - name: enable new site
+     ansible.builtin.command: "/usr/sbin/a2ensite {{ http_conf }}"
+     notify: restart apache2
+
+   - name: disable default Apache site
+     ansible.builtin.command: "/usr/sbin/a2dissite 000-default.conf"
+     when: disable_default
+     notify: restart apache2
+
+   - name: open firewall
+     community.general.ufw:
+      rule: allow
+      port: "{{ http_port }}"
+      proto: tcp
+
+  handlers:
+   - name: restart apache2
+     ansible.builtin.service:
+      name: apache2
+      state: restarted
+      enabled: true
+     ignore_errors: true
