@@ -1,0 +1,11 @@
+
+<VirtualHost *:{{ http_port }}>
+ ServerAdmin admin@localhost
+ ServerName {{ http_host }}
+ ServerAlias www.{{ http_host }}
+# ErrorLog ${APACHE_LOG}/error.log
+# CustomLog ${APACHE_LOG}/access.log combined
+ DocumentRoot "/var/www/{{ http_host }}"
+</VirtualHost>
+
+#EL LOG SE ENCUENTRA EN /var/log/apache2
