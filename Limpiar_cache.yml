@@ -1,0 +1,15 @@
+
+---
+- name: limpiar cache ram
+  hosts: ubuntu
+  become: true
+  tasks:
+    - name: limpiar cache  RAM
+      copy:
+        content: 3
+        dest: /proc/sys/vm/drop_caches
+        unsafe_writes: yes
+
+
+    - name: limpiar caché
+      shell: sync; echo 3 > /proc/sys/vm/drop_caches
