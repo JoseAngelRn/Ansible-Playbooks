@@ -1,0 +1,46 @@
+---
+- name: Crear usuario, grupo y dar permiso de sudo
+  hosts: all
+  become: true
+  vars:
+      users:
+      - username: "jose"
+        uid: "1220"
+        nombre: "Jose Angel"
+        contrasena: "jose123"
+      #- username: ""
+        #uid: ""
+        #nombre: ""
+        #contrasena: ""
+
+  tasks:
+  - name: "Crear grupo middleware"
+    group:
+      name: "mdl"
+      state: present
+  - name: "crear usuarios y asignarlos a un grupo"
+    user:
+      name: "{{ item.username }}"
+      state: present #absent (Para desabilitar el usuario)
+      group: "mdl"
+      uid: "{{ item.uid }}"
+      comment: "{{ item.nombre }}" #Nombre del usuario 
+      password: "{{ item.contrasena | password_hash('sha512') }}"
+      shell: "/bin/bash"
+      #expires: "-1"
+    with_items: "{{ users }}"
+ # - name: "Limite de expiración de contraseña"
+   # raw: "chage -M 365 {{ item.username }}"
+  #  with_items: "{{ users }}"
+  - name: "Crear el archivo de permisos"
+    file:
+      path: "/etc/sudoers.d/mdl"
+      state: touch
+      mode: "0644"
+      owner: "root"
+      group: "root"
+  - name: "Permitir hacer sudo sin contraseña a los usuarios del grupo mdl"
+    lineinfile:
+      dest: "/etc/sudoers.d/mdl"
+      state: present
+      line: "%mdl ALL=(ALL) NOPASSWD: ALL"
