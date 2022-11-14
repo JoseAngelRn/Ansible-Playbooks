@@ -1,6 +1,6 @@
 ---
 - name: Crear usuario, grupo y dar permiso de sudo
-  hosts: all
+  hosts: AWX
   become: true
   vars:
       users:
@@ -12,12 +12,14 @@
         #uid: ""
         #nombre: ""
         #contrasena: ""
+#A medida que añadamos mas usuarios los creará uno de tras de otro 
 
   tasks:
-  - name: "Crear grupo middleware"
+  - name: "Crear grupo"
     group:
       name: "mdl"
       state: present
+
   - name: "crear usuarios y asignarlos a un grupo"
     user:
       name: "{{ item.username }}"
@@ -32,6 +34,7 @@
  # - name: "Limite de expiración de contraseña"
    # raw: "chage -M 365 {{ item.username }}"
   #  with_items: "{{ users }}"
+
   - name: "Crear el archivo de permisos"
     file:
       path: "/etc/sudoers.d/mdl"
@@ -39,8 +42,43 @@
       mode: "0644"
       owner: "root"
       group: "root"
+
   - name: "Permitir hacer sudo sin contraseña a los usuarios del grupo mdl"
     lineinfile:
       dest: "/etc/sudoers.d/mdl"
       state: present
       line: "%mdl ALL=(ALL) NOPASSWD: ALL"
+
+
+#Otra forma de hacerlo si el nombre del grupo es igual que el del usuario que creamos (Haciendo mas uso de variables)
+  tasks:
+  - name: "Crear grupo"
+    group:
+      name: "{{ item.username }}"
+      state: present
+    with_items: "{{ users }}"
+
+  - name: "crear usuarios y asignarlos a un grupo"
+    user:
+      name: "{{ item.username }}"
+      state: present
+      group: "{{ item.username }}"
+      comment: "{{ item.nombre }}"
+      password: "{{ item.contrasena | password_hash('sha512') }}"
+      shell: "/bin/bash"
+    with_items: "{{ users }}"
+
+  - name: "Crear el archivo de permisos"
+    file:
+      path: "/etc/sudoers.d/{{ item.username }}"
+      state: touch
+      mode: "0644"
+      owner: "root"
+    with_items: "{{ users }}"
+
+  - name: "Permitir hacer sudo sin contraseña a los usuarios del grupo"
+    lineinfile:
+      dest: "/etc/sudoers.d/{{ item.username }}"
+      state: present
+      line: "%{{ item.username }} ALL=(ALL) NOPASSWD: ALL"
+    with_items: "{{ users }}"
