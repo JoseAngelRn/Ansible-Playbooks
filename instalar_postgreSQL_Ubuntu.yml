@@ -11,12 +11,12 @@
   tasks:
     - name: Instalar paquetes
       ansible.builtin.apt:
-      name:
-        - postgresql
-        - postgresql-contrib
-        - libpq-dev
-        - python3-psycopg2
-      state: present
+        name:
+          - postgresql
+          - postgresql-contrib
+          - libpq-dev
+          - python3-psycopg2
+        state: present
 
     - name: Comprobar si PostgreSQL esta iniciado
       ansible.builtin.stat:
