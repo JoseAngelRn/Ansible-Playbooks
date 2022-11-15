@@ -1,0 +1,40 @@
+---
+- name: Instalar PostgreSQL Ubuntu
+  hosts: ubuntu
+  become: true
+  vars:
+    postgresql_version: "14"
+    postgresql_bin_path: "/usr/lib/postgresql/{{ postgres\ ql_version }}/bin"
+    postgresql_data_dir: "/var/lib/postgresql/{{ postgres\ ql_version }}/main"
+    ansible_ssh_pipelining: true
+
+  tasks:
+    - name: Install packages
+      ansible.builtin.apt:
+      name:
+- postgresql
+- postgresql-contrib
+- libpq-dev
+- python3-psycopg2
+state: present
+- name: Check if PostgreSQL is initialized
+ansible.builtin.stat:
+path: "{{ postgresql_data_dir }}/pg_hba.conf"
+register: postgres_data
+- name: Empty data dir
+ansible.builtin.file:
+path: "{{ postgresql_data_dir }}"
+state: absent
+when: not postgres_data.stat.exists
+- name: Initialize PostgreSQL
+ansible.builtin.shell: "{{ postgresql_bin_path }}/i\
+nitdb -D {{ postgresql_data_dir }}"
+Ansible For PostgreSQL 1012
+become: true
+become_user: postgres
+when: not postgres_data.stat.exists
+- name: Start and enable service
+ansible.builtin.service:
+name: postgresql
+state: started
+enabled: true
