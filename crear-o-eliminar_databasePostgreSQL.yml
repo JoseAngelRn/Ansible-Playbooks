@@ -10,7 +10,7 @@
         name: python3-psycopg2
         state: present
 
-    - name: Crear database
+    - name: Crear/Eliminar database
       community.postgresql.postgresql_db:
         state: present #Si queremos borrar la databse debemos cambiar el estado a absent
         name: "{{ db_name }}"
