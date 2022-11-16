@@ -1,0 +1,20 @@
+---
+- name: Crear usuario o rol para postgresql
+  hosts: all
+  become: true
+  vars:
+    db_user: myuser
+    db_password: 12345Ab##
+  tasks:
+    - name: Utility present
+      ansible.builtin.package:
+        name: python3-psycopg2
+        state: present
+
+    - name: Crear usuario db
+      community.postgresql.postgresql_user:
+        state: present
+        name: "{{ db_user }}"
+        password: "{{ db_password }}"
+      become: true
+      become_user: postgres
