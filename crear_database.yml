@@ -3,7 +3,7 @@
   hosts: all
   become: true
   vars:
-    db_name: testdb
+    db_name: pruebadb
   tasks:
     - name: Utility present
       ansible.builtin.package:
