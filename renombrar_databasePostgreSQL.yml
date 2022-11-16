@@ -10,6 +10,7 @@
       ansible.builtin.package:
         name: python3-psycopg2
         state: present
+  
     - name: Renombrar database
       community.postgresql.postgresql_db:
         state: rename
