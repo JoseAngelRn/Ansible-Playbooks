@@ -1,5 +1,5 @@
 ---
-- name: postgresql demo
+- name: Creacion de database en PostgreSQL
   hosts: all
   become: true
   vars:
@@ -10,7 +10,7 @@
         name: python3-psycopg2
         state: present
 
-    - name: Create db
+    - name: Crear database
       community.postgresql.postgresql_db:
         state: present
         name: "{{ db_name }}"
