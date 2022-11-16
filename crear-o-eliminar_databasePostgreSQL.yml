@@ -12,7 +12,7 @@
 
     - name: Crear database
       community.postgresql.postgresql_db:
-        state: present
+        state: present #Si queremos borrar la databse debemos cambiar el estado a absent
         name: "{{ db_name }}"
       become: true
       become_user: postgres
