@@ -1,0 +1,19 @@
+---
+- name: Cambiar de nombre una database postgresql
+  hosts: all
+  become: true
+  vars:
+    db_name: pruebadb
+    db_newname: ejemplodb
+  tasks:
+    - name: Utility present
+      ansible.builtin.package:
+        name: python3-psycopg2
+        state: present
+    - name: Renombrar database
+      community.postgresql.postgresql_db:
+        state: rename
+        name: "{{ db_name }}"
+        target: "{{ db_newname }}"
+      become: true
+      become_user: postgres
