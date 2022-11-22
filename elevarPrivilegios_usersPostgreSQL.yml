@@ -3,7 +3,7 @@
   hosts: all
   become: true
   vars:
-    db_user: myuser
+    db_user: user
     db_name: ejemplodb
   tasks:
     - name: Utility present
