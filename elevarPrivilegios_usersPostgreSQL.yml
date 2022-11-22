@@ -11,7 +11,7 @@
         name: python3-psycopg2
         state: present
   
-    - name: Grant db user access to db
+    - name: Elevar privilegios
       community.postgresql.postgresql_privs:
         type: database
         database: "{{ db_name }}"
