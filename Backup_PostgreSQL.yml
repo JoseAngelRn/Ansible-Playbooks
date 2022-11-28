@@ -1,0 +1,27 @@
+---
+- name: postgresql backup
+  hosts: all
+  become: true
+  vars:
+    db_name: ejemplodb
+    backup_dir: "/backups"
+  tasks:
+    - name: Utility present
+      ansible.builtin.package:
+        name: python3-psycopg2
+        state: present
+
+    - name: Backup directory
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        mode: 0777
+        owner: postgres
+        state: directory
+        
+    - name: Backup db
+      community.postgresql.postgresql_db:
+        state: dump
+        name: "{{ db_name }}"
+        target: "{{ backup_dir }}/{{ db_name }}.gz"
+      become: true
+      become_user: postgres
