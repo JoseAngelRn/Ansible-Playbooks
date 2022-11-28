@@ -1,5 +1,5 @@
 ---
-- name: postgresql demo
+- name: postgresql restaurar BBDD
   hosts: all
   become: true
   vars:
@@ -17,7 +17,7 @@
         mode: 0777
         owner: postgres
         state: directory
-        
+
     - name: RestRestaurar BBDD
       community.postgresql.postgresql_db:
         state: restore
