@@ -1,0 +1,41 @@
+  vars_prompt:
+    - name: postgresql_version
+      prompt: Introduzca la versión de postgreSQL que desea instalar
+      private: false
+
+    - name: db_name
+      prompt: Instroduzca el nombre de la BBDD
+      private: false
+      
+    - name: backup_dir
+      prompt: Introduzca el directorio donde se guardará el backup
+      private: false
+
+    - name: db_user
+      prompt: Introduzca el nombre del usuario administrador a crear
+      private: false
+
+    - name: db_password
+      prompt: Introduzca la contraseña del administrador
+      
+
+  tasks:
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: 'Versión guardada {{ postgresql_version }}'
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: 'Nombre de la BBDD guardado {{ db_name }}'
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: 'Directorio de backup guardado {{ backup_dir }}'
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: 'Nombre de administrador guardado {{ db_user }}'
+
+    - name: Print a message
+      ansible.builtin.debug:
+        msg: 'Contraseña guardada {{ db_password }}'
