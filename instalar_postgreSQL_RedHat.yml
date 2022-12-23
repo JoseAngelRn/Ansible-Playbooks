@@ -26,3 +26,4 @@
       ansible.builtin.service: Ansible For PostgreSQL 1004
       name: postgresql
       state: started
+      enabled: true
